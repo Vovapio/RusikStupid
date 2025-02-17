@@ -5,9 +5,12 @@ import os
 
 API_KEY = '8013b162-6b42-4997-9691-77b7074026e0'
 
+MIN_SPAN = 0.001
+MAX_SPAN = 50
+
 
 def get_map(ll, spn, map_type="map"):
-    map_request = f"http://static-maps.yandex.ru/1.x/?ll={ll}&spn={spn}&l={map_type}"
+    map_request = f"http://static-maps.yandex.ru/1.x/?ll={ll}&spn={spn},{spn}&l={map_type}"
     response = requests.get(map_request)
 
     if not response:
@@ -23,30 +26,34 @@ def get_map(ll, spn, map_type="map"):
     return map_file
 
 
-def show_map(ll, spn):
+def show_map():
     pygame.init()
     screen = pygame.display.set_mode((600, 450))
     pygame.display.set_caption("Карта")
 
-    map_file = get_map(ll, spn)
-
-    map_image = pygame.image.load(map_file)
-    screen.blit(map_image, (0, 0))
-    pygame.display.flip()
+    ll = "37.620070,55.753630"
+    spn = 0.05
 
     running = True
     while running:
+        map_file = get_map(ll, spn)
+
+        screen.blit(pygame.image.load(map_file), (0, 0))
+        pygame.display.flip()
+
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
+            elif event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_PAGEUP:
+                    spn = max(spn / 2, MIN_SPAN)
+                elif event.key == pygame.K_PAGEDOWN:
+                    spn = min(spn * 2, MAX_SPAN)
+
+        os.remove(map_file)
 
     pygame.quit()
-    os.remove(map_file)
 
 
 if __name__ == "__main__":
-    ll = "37.620070,55.753630"
-    spn = "0.05,0.05"
-
-    show_map(ll, spn)
-
+    show_map()
