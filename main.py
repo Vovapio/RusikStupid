@@ -45,9 +45,9 @@ def show_map():
             if event.type == pygame.QUIT:
                 running = False
             elif event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_PAGEUP:
+                if event.key == pygame.K_w:
                     spn = max(spn / 2, MIN_SPAN)
-                elif event.key == pygame.K_PAGEDOWN:
+                elif event.key == pygame.K_s:
                     spn = min(spn * 2, MAX_SPAN)
 
         os.remove(map_file)
